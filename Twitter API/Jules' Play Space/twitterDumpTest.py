@@ -4,60 +4,38 @@ Check rate limit. on remaining trends, queries, searches
 Print tweets to file.
 Scrub file. 
 '''
-
+import time
 import sys
-
 import tweepy
 from tweepy import OAuthHandler
-
 from apiKeys import * #consumer_key, consumer_secret, access_token, and access_secret
 
+# Authentication
 united_states_woeid = 23424977
-
 non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
- 
 auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
- 
 api = tweepy.API(auth)
+EXHAUST_TIME = 900 #15 mins
+DAILY_TIME = 86400 #24 hours
 
-print ("RATE LIMIT AT START:")
-data = api.rate_limit_status()
-print ("Trends: " + str(data['resources']['trends']['/trends/place']))
-#convert str to int?
-#print ("Trends: " + str(data['resources']['trends']['/trends/place']['remaining']))
-
-print ("Searches: " + str(data['resources']['search']['/search/tweets']))
-print ()
-
-#trends_place returns the top 50 trending topics, if available
-trends = api.trends_place(united_states_woeid)[0]['trends']
-trendNames = [trend['name'] for trend in trends]
-
-print("Here are the top " + str(len(trendNames)) + " trending topics in the United States:")
-print(trendNames)
-
-print("\nPrinting one tweet per topic")
-for trendName in trendNames :
-
-        #get 1 tweet per trendName (max 100)
-        tweets = tweepy.Cursor(api.search, q = trendName).items(1)
-        for tweet in tweets :
-                print(tweet.text.translate(non_bmp_map) + "\n\n")
-
-
-print ("\nRATE LIMIT AT END:")
-data = api.rate_limit_status()
-print ("Trends: " + str(data['resources']['trends']['/trends/place']))
-print ("Searches: " + str(data['resources']['search']['/search/tweets']))
-print ()
+def TimeDelay(timeToWait):
+	time.sleep(timeToWait)
 
 # If remaining is 1 or 15 wait 15mins. Running once a day? every 12 hours?
-def CheckRate():
+def CheckLimit():
+	data = api.rate_limit_status()
 	trendsRemaining = data['resources']['trends']['/trends/place']['remaining']
-	searchesRemaining = data['resources']['trends']['/search/tweets']['remaining']
-	if 
+	searchesRemaining = data['resources']['search']['/search/tweets']['remaining']
+	if trendsRemaining == 1 or searchesRemaining == 50:
+		print "Exhausted limit...Waiting 15 mins.\n"
+		TimeDelay(WAIT_TIME)
 
 if __name__ == "__main__":
-	while
+	while True:
+		#Check rate limit
+		CheckLimit()
+		#IF it's fine, dump tweets
 
+		#wait 24 hours
+		TimeDelay(DAILY_TIME)
