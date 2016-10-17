@@ -4,6 +4,7 @@ Check rate limit. on remaining trends, queries, searches
 Print tweets to file.
 Scrub file. 
 '''
+from __future__ import print_function
 import time
 import sys
 import tweepy
@@ -18,6 +19,14 @@ auth.set_access_token(access_token, access_secret)
 api = tweepy.API(auth)
 EXHAUST_TIME = 900 #15 mins
 DAILY_TIME = 86400 #24 hours
+NUM_OF_TWEETS = 1 #Per trending topic
+dumpFile = open('Dump', 'a') #Append to dump file
+
+def RateLimitStatus():
+	data = api.rate_limit_status()
+	print("Rate Limit Status:\n")
+	print("Trends: " + str(data['resources']['trends']['/trends/place']))
+	print("Searches: " + str(data['resources']['search']['/search/tweets']))
 
 def TimeDelay(timeToWait):
 	time.sleep(timeToWait)
@@ -28,14 +37,44 @@ def CheckLimit():
 	trendsRemaining = data['resources']['trends']['/trends/place']['remaining']
 	searchesRemaining = data['resources']['search']['/search/tweets']['remaining']
 	if trendsRemaining == 1 or searchesRemaining == 50:
-		print "Exhausted limit...Waiting 15 mins.\n"
+		print("Exhausted limit...Waiting 15 mins.\n")
 		TimeDelay(WAIT_TIME)
 
+def DumpTweets():
+	trends = api.trends_place(united_states_woeid)[0]['trends']
+	trendNames = [trend['name'] for trend in trends]
+	dumpFile.write("Retrieved " + str(len(trendNames)) + " US trending topics:\n")
+	dumpFile.write(str(trendNames))
+	dumpFile.write("\nPrinting " + str(NUM_OF_TWEETS) + " tweet per topic\n")
+	for trendName in trendNames:
+		dumpFile.write("Topic: " + trendName.encode('utf8') + ". Tweet(s):\n")
+  		#get 1 tweet per trendName (max 100)
+   		tweets = tweepy.Cursor(api.search, q = trendName).items(NUM_OF_TWEETS)
+   		for tweet in tweets:
+   			dumpFile.write(tweet.text.translate(non_bmp_map).encode('utf8'))
+   			dumpFile.write('\n\n')
+
 if __name__ == "__main__":
+	'''
 	while True:
+		#Rate limit status
+		RateLimitStatus()
 		#Check rate limit
 		CheckLimit()
 		#IF it's fine, dump tweets
-
+		DumpTweets()
+		#Rate limit status
+		RateLimitStatus()
 		#wait 24 hours
 		TimeDelay(DAILY_TIME)
+	'''
+	#Rate limit status
+	RateLimitStatus()
+	#Check rate limit
+	CheckLimit()
+	#IF it's fine, dump tweets
+	DumpTweets()
+	#Rate limit status
+	RateLimitStatus()
+	#wait 24 hours
+	TimeDelay(DAILY_TIME)
