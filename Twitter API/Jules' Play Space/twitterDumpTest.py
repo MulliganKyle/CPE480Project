@@ -77,4 +77,3 @@ if __name__ == "__main__":
 	#Rate limit status
 	RateLimitStatus()
 	#wait 24 hours
-	TimeDelay(DAILY_TIME)
