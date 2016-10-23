@@ -3,8 +3,6 @@
 #
 # Definition for a class that holds data for a single tweet from twitter.
 
-import sys
-sys.path.insert(0, '../../Memes')
 
 from MemeClass import MemeClass
 

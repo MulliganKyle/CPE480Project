@@ -1,8 +1,8 @@
 '''
 Make new twitter dummy acct
-Check rate limit. on remaining trends, queries, searches 
+Check rate limit. on remaining trends, queries, searches
 Print tweets to file.
-Scrub file. 
+Scrub file.
 '''
 
 import sys
@@ -15,10 +15,10 @@ from apiKeys import * #consumer_key, consumer_secret, access_token, and access_s
 united_states_woeid = 23424977
 
 non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
- 
+
 auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
- 
+
 api = tweepy.API(auth)
 
 print ("RATE LIMIT AT START:")
@@ -51,5 +51,3 @@ data = api.rate_limit_status()
 print ("Trends: " + str(data['resources']['trends']['/trends/place']))
 print ("Searches: " + str(data['resources']['search']['/search/tweets']))
 print ()
-
-
