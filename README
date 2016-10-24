@@ -12,3 +12,8 @@ Running tests:
 
    python -m unittest Twitter.TweetTest
    python -m unittest Filtering.FilterTest
+
+Running program:
+
+   python tweet_loader.py
+   python generate_meme.py
