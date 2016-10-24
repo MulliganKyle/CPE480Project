@@ -8,3 +8,6 @@ Notes when running:
    
       TWITTER_API_KEY = '<TWITTER API KEY HERE>'
 
+Running tests:
+
+   python -m unittest Twitter.TweetTest
