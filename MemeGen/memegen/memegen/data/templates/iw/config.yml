@@ -1,9 +1,0 @@
-name: Insanity Wolf
-link: http://knowyourmeme.com/memes/insanity-wolf
-default:
-- DOES TESTING
-- IN PRODUCTION
-aliases:
-- insanity-wolf
-- insanity
-regexes: []

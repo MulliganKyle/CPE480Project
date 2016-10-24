@@ -1,9 +1,0 @@
-name: Matrix Morpheus
-link: http://knowyourmeme.com/memes/matrix-morpheus
-default:
-- ''
-aliases:
-- matrix-morpheus
-- what-if
-regexes:
-- (what .+ you)/?(.+)

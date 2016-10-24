@@ -1,9 +1,0 @@
-name: Socially Awesome Penguin
-link: http://knowyourmeme.com/memes/socially-awesome-penguin
-default:
-- SAY A WORD WRONG
-- CREATE HILARIOUS INSIDE JOKE
-aliases:
-- awesome-penguin
-- penguin-awesome
-regexes: []
