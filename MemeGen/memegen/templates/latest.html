@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% set active_page = "latest" %}
+{% block title %} | Latest{% endblock %}
+{% block content %}
+  <div class="meme-templates">
+    <div class="container">
+      <div class="row">
+      {% for src in srcs %}
+        <div class="col-sm-4">
+          <img class="meme-example" width="240" src="{{ src }}" id="latest{{ loop.index }}" />
+        </div>
+
+       {% if loop.index is divisibleby 3 %}
+       </div>
+       {% endif %}
+
+       {% if loop.index is divisibleby 3 %}
+       <div class="row">
+       {% endif %}
+
+       {% if loop.last %}
+        </div>
+       {% endif %}
+     {% endfor %}
+    </div>
+   </div>
+
+  <script>
+    var reload = function(){
+      console.log("Refreshing images");
+      {% for src in srcs %}
+        var elem{{ loop.index }} = document.getElementById('latest{{ loop.index }}');
+        elem{{ loop.index }}.src = '{{ src }}?' + Math.random();
+      {% endfor %}
+    };
+    setInterval(reload, {{ refresh * 1000 }});
+  </script>
+{% endblock %}
