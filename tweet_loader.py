@@ -5,7 +5,7 @@ import tweepy
 import re
 import pickle
 from tweepy import OAuthHandler
-from Twitter.apiKeys import * #consumer_key, consumer_secret, access_token, and access_secret
+from config import * #consumer_key, consumer_secret, access_token, and access_secret
 from Twitter.Tweet import *
 
 # Authentication
