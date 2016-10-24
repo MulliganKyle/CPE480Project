@@ -1,18 +1,28 @@
+import unittest
+
 from BannedWordsFilter import *
 from RandomFilter import *
+from Twitter.Tweet import Tweet
+from Memes.MemeClass import MemeType
 
-filter = BannedWordsFilter()
-filter2 = RandomFilter(1)
-tweets = {Tweet('topic', 'body of tweet 1'), Tweet('topic', 'Something offensive towards christians'), Tweet('topic', 'body of tweet 2')}
 
-filteredTweets = filter.filter(tweets)
+class FilterTest(unittest.TestCase):
 
-print ('\n\nFiltered Tweets: ')
-for tweet in filteredTweets:
-    print(tweet.text)
+   def setUp(self):
+      self.tweets = {Tweet('topic', 'body of tweet 1'),
+                     Tweet('topic', 'Something offensive towards christians'),
+                     Tweet('topic', 'body of tweet 2')}
 
-filteredTweets = filter2.filter(tweets)
+   def test_banned_filter(self):
+      tweet_filter = BannedWordsFilter()
+      filtered_tweets = tweet_filter.filter(self.tweets)
+      self.assertEquals(len(filtered_tweets), 2)
 
-print ('\n\nFiltered Tweets: ')
-for tweet in filteredTweets:
-    print(tweet.text)
+   def test_random_filter(self):
+      tweet_filter = RandomFilter(1)
+      filtered_tweets = tweet_filter.filter(self.tweets)
+      self.assertEquals(len(filtered_tweets), 1)
+
+
+if __name__ == '__main__':
+    unittest.main()

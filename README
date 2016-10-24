@@ -11,3 +11,4 @@ Notes when running:
 Running tests:
 
    python -m unittest Twitter.TweetTest
+   python -m unittest Filtering.FilterTest

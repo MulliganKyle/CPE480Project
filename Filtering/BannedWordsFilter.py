@@ -6,58 +6,57 @@
 import os
 from TweetFilter import *
 
-class BannedWordsFilter (TweetFilter) :
 
-	# Attributes:
-	#	folder: The name of the folder containing banned words files
-	#	wordsList: A list of all all banned words in the blacklist folder
-	def __init__ (self) : 
-		self.folder = 'blacklist'
+class BannedWordsFilter(TweetFilter):
+	"""
+	folder: str
+		Name of the folder containing banned words.
+	wordList: list
+		All banned words in the blacklist folder.
+	"""
+
+	def __init__(self): 
+		self.folder = 'Filtering/blacklist'
 		self.wordsList = set()
 
-	def filter (self, tweets) :
-
+	def filter(self, tweets):
 		toRemove = set()
 		filteredTweets = set()
-		os.chdir(self.folder)
-		print ('changed directory to ' + os.getcwd())
 
-		filenames = os.listdir(os.getcwd())
+		full_filepath = os.path.abspath(self.folder)
+		filenames = os.listdir(full_filepath)
 
-		#loop through every file in the blacklist folder
-		for filename in filenames :
+		# Loop through every file in the blacklist folder.
+		for filename in filenames:
+			print 'Loading banned words from %s' %filename
+			full_filename = os.path.join(full_filepath, filename)
 
-			print ('loading banned words from ' + filename)
-
-			#for each string in the file, add a key to the set
-			with open (filename) as stream:
+			# For each string in the file, add a key to the set.
+			with open(full_filename) as stream:
 				lines = stream.read().splitlines()
 
 			self.wordsList.update(lines)
 
 
-		#print ('The following words were added to the banned words list: ')
-		#for word in self.wordsList :
-		#	print(word)
+		# print 'The following words were added to the banned words list: '
+		# for word in self.wordsList:
+		# 	 print word
 
-		for tweet in tweets :
-
-			if (self.containsBannedWord(tweet.text)) :
+		for tweet in tweets:
+			if self.containsBannedWord(tweet.text):
 				toRemove.add(tweet)
 
-		for tweet in tweets :
-			if (tweet not in toRemove) :
+		for tweet in tweets:
+			if tweet not in toRemove:
 				filteredTweets.add(tweet)
 
 		return filteredTweets
 
-	def containsBannedWord(self, text) :
-
-		for token in text.split(' ') :
-			
-			if (token in self.wordsList) : 
-				#print (token + ' is a banned word')
-				#print ('removing the following tweet: ' + text)
+	def containsBannedWord(self, text):
+		for token in text.split(' '):
+			if token in self.wordsList: 
+				# print '%s is a banned word' %token
+				# print 'removing the following tweet: %s' %text
 				return True
 
 		return False
