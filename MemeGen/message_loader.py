@@ -1,0 +1,5 @@
+
+class MessageLoader(object):
+
+   pass
+

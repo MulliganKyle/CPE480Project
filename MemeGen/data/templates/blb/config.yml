@@ -1,0 +1,9 @@
+name: Bad Luck Brian
+link: http://knowyourmeme.com/memes/bad-luck-brian
+default:
+- ''
+aliases:
+- bad-luck-brian
+- bad-luck
+- brian
+regexes: []

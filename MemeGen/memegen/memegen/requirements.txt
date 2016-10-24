@@ -1,0 +1,14 @@
+# Server
+Flask==0.11.1
+Flask-API==0.6.9
+webargs==1.4.0
+
+# Models
+Pillow==3.4.2
+YORM==1.1
+requests==2.11.1
+profanityfilter==1.1
+
+# Deployment
+Flask-Script==2.0.5
+gunicorn==19.6.0

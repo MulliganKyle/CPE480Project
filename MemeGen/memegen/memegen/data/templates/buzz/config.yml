@@ -1,0 +1,11 @@
+name: X, X Everywhere
+link: https://imgflip.com/memetemplate/X-Everywhere
+default:
+- MEMES
+- MEMES EVERYWHERE
+aliases:
+- everywhere
+- x-everywhere
+- buzz-lightyear
+regexes:
+- (.+)/?(\b.+ everywhere)
