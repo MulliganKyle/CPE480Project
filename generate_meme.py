@@ -61,8 +61,7 @@ def x_all_the_y(sentence):
 def generator():
    # Get tweets.
    dump = open("Twitter/Dumps/SerializedTweets.p", "rb")
-#   tweets = pickle.load(dump)
-   tweets = set([Tweet('topic', 'this is the tweet')])
+   tweets = pickle.load(dump)
 
    # Get single tweet.
    banned_filter = BannedWordsFilter()
