@@ -6,8 +6,13 @@ Notes when running:
 
    Create a config.py file containing:
    
-      TWITTER_API_KEY = '<TWITTER API KEY HERE>'
+    	consumer_key = 'CONSUMER_KEY_HERE'
+		consumer_secret = 'CONSUMER_SECRET_HERE'
+		access_token = 'ACCESS_TOKEN_HERE'
+		access_secret = 'ACCESS_SECRET_HERE'
 
+	For instructions on how to get access keys, go here: https://marcobonzanini.com/2015/03/02/mining-twitter-data-with-python-part-1/
+	
 Running tests (From project root):
 
    python -m unittest Twitter.TweetTest
