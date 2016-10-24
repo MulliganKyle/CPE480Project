@@ -1,5 +1,5 @@
 import nltk
-#import pickle
+import pickle
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet as wn
 
