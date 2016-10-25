@@ -14,7 +14,6 @@ def bid_on_tweet(memes, tweet):
          max_score = score
          tweet_text = text
 
-   print(score)
    return tweet_text
 
 
