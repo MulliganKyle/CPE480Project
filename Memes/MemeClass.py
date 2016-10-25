@@ -43,11 +43,11 @@ class Meme(object):
 
    # Gets the verb within the sentence.
    def _find_verbs(self, tagged):
-      return [word for word in tagged if word[1].find('VB') >= 0]
+      return [word for word in tagged if 'VB' in word[1]]
 
-   # Gets the plural nouns within the sentence.
-   def _find_plural_nouns(self, tagged):
-      return [word for word in tagged if(word[1] == "NNS" or word[1] == "NNPS")]
+   # Gets the plural common nouns within the sentence.
+   def _find_common_plural_nouns(self, tagged):
+      return [word for word in tagged if word[1] == 'NNS']
 
    # Transforming the verbs to the present time.
    def _get_basic_form(self, verb):
@@ -60,24 +60,22 @@ class Meme(object):
             return word
       return None
 
-   # Gets first verb that satisfies condition.
-   def _get_first_noun(self, words, condition):
-      for idx, word, pos in enumerated(words):
-         if condition(word, idx):
-            return word
-      return None
-
    # Combines tokens.
    def _combine_tokens(self, tokens):
       string = ''
+      prev = ' '
       for token in tokens:
          if token in ['.', '!', '?', ',', ';']:
             string += '.'
+         elif token == '@':
+            prev = ' @'
          elif token:
-            string += ' %s' %(token)
+            string += '%s%s' %(prev, token)
+            prev = ' '
       return string
 
    def generate(self, tweet):
+      # TODO: RETURN SOME TWEET OBJECT
       raise NotImplementedError()
 
 
@@ -97,27 +95,28 @@ class Meme_XAllTheY(Meme):
    Represents a "doge" meme.
    """
 
+   # Gets first noun that is after the verb.
+   def _get_first_noun(self, nouns, tokens, verb_idx):
+      for word, pos in nouns:
+         if tokens.index(word) > verb_idx:
+            return word
+      return None
+
    def generate(self, tweet):
-      # TODO: DEBUG
       text = ''
       score = 0.0
 
       sentence = tweet.text
       tokens, tagged = self._tag_sentence(sentence)
       verbs = self._find_verbs(tagged)
-      nouns = self._find_plural_nouns(tagged)
-      print(sentence)
+      nouns = self._find_common_plural_nouns(tagged)
 
       if verbs and nouns:
-         print(nouns, verbs)
          verb = self._get_first_verb(verbs)
          if verb:
-            print(verb)
+            verb_idx = tokens.index(verb)
             verb = self._get_basic_form(verb)
-            verb_idx = sentence.index(verb)
-            noun = self._get_first_word(nouns,
-               condition=(lambda word, idx: idx > verb_idx))
-            print(noun)
+            noun = self._get_first_noun(nouns, tokens, verb_idx)
 
             if noun:
                text = '%s all the %s!' %(verb, noun)

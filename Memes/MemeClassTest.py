@@ -6,14 +6,25 @@ from MemeClass import *
 class TestMeme_XAllTheY(unittest.TestCase):
 
    def setUp(self):
-      self.meme = Meme_OneDoesNotSimply(0.5)
+      self.meme = Meme_XAllTheY(0.5)
 
-   def test_generate(self):
-      tweet = Tweet(topic='topic', text='@Sixers: The team has signed former Temple guard @Dchristmas22.')
-      self.assertFalse()
+   def test_generate_found(self):
+      tweet = Tweet(topic='topic', text='The team has signed former Temple guards')
+      text, score = self.meme.generate(tweet)
+      self.assertEquals(text, 'have all the guards!')
+      self.assertEquals(score, 0.5)
 
-   def test_update(self):
-      pass
+   def test_generate_plural_singular(self):
+      tweet = Tweet(topic='topic', text='The team has signed former Temple guard @Dchristmas22.')
+      text, score = self.meme.generate(tweet)
+      self.assertEquals(text, '')
+      self.assertEquals(score, 0.0)
+
+   def test_generate_no_verb(self):
+      tweet = Tweet(topic='topic', text='Twitter yay happy.')
+      text, score = self.meme.generate(tweet)
+      self.assertEquals(text, '')
+      self.assertEquals(score, 0.0)
 
 
 class TestMeme_OneDoesNotSimply(unittest.TestCase):
