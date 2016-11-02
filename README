@@ -21,5 +21,11 @@ Running tests (From project root):
 
 Running program (From project root):
 
-   python tweet_loader.py
-   python generate_meme.py
+   Running Program
+   
+      python tweet_loader.py
+      python generate_meme.py
+
+   Generating Classifiers
+
+      python Memes/classifiers/generate_questions_classifier.py 
