@@ -1,38 +1,46 @@
-from random import shuffle
+import os
+
+from Memes.classifiers.helpers import *
 
 
-def parse_txt_file():
-   return ['hi', 'hello']
+
+# Generates the features on the provided statement.
+def generate_features(statement):
+   tokens = get_tokens(statement)
+   features = {}
+
+   # Generates features based on questions keywords.
+   question_keywords = ['what', 'when', 'where', 'why', 'who', 'how']
+   for keyword in question_keywords:
+      features['contains_%s' %keyword] = keyword in tokens
+
+   return features
 
 
-def generate_features():
-   return {'temp': True}
-
-
-def split_training_test(data, split=0.75):
-   shuffle(data)
-   training_data = data[:split] 
-   test_data = data[split:]
-   return (training_data, test_data)
 
 def main():
+   path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
+
    # Get data.
-   questions = parse_txt_file('questions.txt')
-   statements = parse_txt_file('statements.txt')
+   questions = parse_txt_file(filename='questions.txt', path=path)
+   statements = parse_txt_file(filename='statements.txt', path=path)
 
    # Generate features.
    data = []
-   questions_features = generate_features(questions)
-   data.extend([(features, True) for features in questions_features])
-   statements_features = generate_features(statements)
-   data.extend([(features, False) for features in statements_features])
-   
+   for question in questions:
+      data.append((generate_features(question), True))
+   for statement in statements:
+      data.append((generate_features(statement), False))
+
    # Generates training and test set.
    training_data, test_data = split_training_test(data)
 
    # Generate classifier with score.
+   classifier, score = create_classifier(training_data, test_data)
+   print 'classifier score: %.4f' %score
 
    # Pickle classifier.
+   pickle_classifier(classifier, score, ClassifierType.QUESTION)
 
 
 if __name__ == '__main__':

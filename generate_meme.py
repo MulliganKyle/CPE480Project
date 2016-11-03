@@ -4,9 +4,13 @@ from tweepy import OAuthHandler
 
 from Filtering.BannedWordsFilter import BannedWordsFilter
 from Filtering.RandomFilter import RandomFilter
-from Twitter.Tweet import Tweet
-from Memes.MemeClass import *
+
 from MemeGen.memegenerator import make_meme
+from Memes.classifiers.helpers import ClassifierType
+import Memes.classifiers.generate_questions_classifier as gqc
+
+from Memes.MemeClass import *
+from Twitter.Tweet import Tweet
 from config import *
 
 
@@ -46,11 +50,12 @@ def generator():
    tweet = random_filter.filter(filtered_tweets)[0]
 
    # Initialize MemeClasses.
-   memes = [Meme_Doge('standard.jpg', score=0.1),
-            Meme_XAllTheY('standard.jpg',score=0.2),
-            Meme_OneDoesNotSimply('successkid.jpg', score=0.2),
-            Meme_JackieChan('standard.jpg', score=0.2,
-                            classifier='temp.pickle', func=None)]
+   memes = [Meme_Doge('doge.jpg', score=0.1),
+            Meme_XAllTheY('x_all_the_y.jpg',score=0.2),
+            Meme_OneDoesNotSimply('one_does_not_simply.jpg', score=0.2),
+            Meme_JackieChan('jackie_chan.jpg',
+                            classifier=ClassifierType.QUESTION,
+                            func=gqc.generate_features)]
 
    # Gets the best matching meme and makes a meme for it.
    tweet = bid_on_tweet(memes, tweet)
@@ -58,6 +63,11 @@ def generator():
                            tweet.meme_text_lower,
                            tweet.meme_class.filename)
    tweet.image.save(MEME_IMG_FILENAME)
+
+   # Print metadata about tweet.
+   print type(tweet.meme_class)
+   print tweet.meme_text_upper
+   print tweet.meme_text_lower
 
    # Posts tweet to Twitter.
    should_post = raw_input('Should I post to twitter? ')

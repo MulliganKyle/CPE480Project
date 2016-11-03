@@ -8,6 +8,8 @@ import pickle
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet as wn
 
+from Memes.classifiers.helpers import unpickle_classifier 
+
 
 class Meme(object):
    """
@@ -59,7 +61,7 @@ class Meme(object):
       return string
 
    def generate(self, tweet):
-      # TODO: RETURN SOME TWEET OBJECT
+      # Returns (text, score) tuple.
       raise NotImplementedError()
 
 
@@ -157,22 +159,22 @@ class Meme_JackieChan(Meme):
    """
    Represents a "Jackie Chan" meme.
    
-   score: int 
-      Score of the class if matching text is found.
-   classifier: str 
-      Filename of pickle file containing the classifier.
+   classifier: obj 
+      ClassifierType indicating the type of classifier.
    func: obj 
       Function that gets the features to use for the classifiers.
    """
 
    def __init__(self, filename, **kwargs):
       super(Meme_JackieChan, self).__init__(filename)
-      self.score = kwargs['score']
-      self.classifier = kwargs['classifier']
+      self.classifier, self.score = unpickle_classifier(kwargs['classifier'])
       self.func = kwargs['func']
 
    def generate(self, tweet):
-      # TODO(ngarg): FINISH
-      return (tweet.text, self.score)
+      features = self.func(tweet.text)
+      result = self.classifier.classify(features)
 
+      if result:
+         return (tweet.text, self.score)
+      return ('', 0)
 
