@@ -9,32 +9,16 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet as wn
 
 
-# TODO: REMOVE!
-class MemeType(object):
-   """
-   Enum representing the type of Meme object.
-   """
-   UNKNOWN = 1
-   DOGE = 2
-   XY = 3
-   BOROMIR = 4
-   JACKIE_CHAN = 5
-   KERMIT = 6
-   GAASTON = 7
-   SKYRIM = 8
-   WONKA = 9
-
-
 class Meme(object):
    """
    Interface representing a meme.
 
-   score: int 
-      Score of the class if matching text is found.
+   filename: str
+      Filename of the image.
    """
 
-   def __init__(self, score):
-      self.score = score
+   def __init__(self, filename, **kwargs):
+      self.filename = filename
 
    # Returns the tokens and tokens tagged with POS
    def _tag_sentence(self, sentence):
@@ -82,18 +66,30 @@ class Meme(object):
 class Meme_Doge(Meme):
    """
    Represents a "doge" meme.
+
+   score: int 
+      Score of the class if matching text is found.
    """
 
-   def generate(self, tweet):
-      # TODO: FINISH
-      return (tweet.text, self.score)
+   def __init__(self, filename, **kwargs):
+      super(Meme_Doge, self).__init__(filename)
+      self.score = kwargs['score']
 
+   def generate(self, tweet):
+      return (tweet.text, self.score)
 
 
 class Meme_XAllTheY(Meme):
    """
-   Represents a "doge" meme.
+   Represents a "X all the Y" meme.
+   
+   score: int 
+      Score of the class if matching text is found.
    """
+
+   def __init__(self, filename, **kwargs):
+      super(Meme_XAllTheY, self).__init__(filename)
+      self.score = kwargs['score']
 
    # Gets first noun that is after the verb.
    def _get_first_noun(self, nouns, tokens, verb_idx):
@@ -127,8 +123,15 @@ class Meme_XAllTheY(Meme):
 
 class Meme_OneDoesNotSimply(Meme):
    """
-   Represents a "doge" meme.
+   Represents a "One Does not Simply" meme.
+   
+   score: int 
+      Score of the class if matching text is found.
    """
+
+   def __init__(self, filename, **kwargs):
+      super(Meme_OneDoesNotSimply, self).__init__(filename)
+      self.score = kwargs['score']
 
    def generate(self, tweet):
       text = ''
@@ -149,5 +152,27 @@ class Meme_OneDoesNotSimply(Meme):
 
       return (text, score)
 
+
+class Meme_JackieChan(Meme):
+   """
+   Represents a "Jackie Chan" meme.
+   
+   score: int 
+      Score of the class if matching text is found.
+   classifier: str 
+      Filename of pickle file containing the classifier.
+   func: obj 
+      Function that gets the features to use for the classifiers.
+   """
+
+   def __init__(self, filename, **kwargs):
+      super(Meme_JackieChan, self).__init__(filename)
+      self.score = kwargs['score']
+      self.classifier = kwargs['classifier']
+      self.func = kwargs['func']
+
+   def generate(self, tweet):
+      # TODO(ngarg): FINISH
+      return (tweet.text, self.score)
 
 

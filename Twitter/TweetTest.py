@@ -1,18 +1,17 @@
 import unittest
 from Tweet import *
-from Memes.MemeClass import MemeType
+from Memes.MemeClass import *
 
 
 class TweetTest(unittest.TestCase):
 
-   def test_default(self):
-      tweet1 = Tweet('topic1', 'text1')
-      self.assertEquals(tweet1.memeClass, MemeType.UNKNOWN)
-
    def test_update(self):
-      tweet1 = Tweet('topic1', 'text1')
-      tweet1.memeClass = MemeType.KERMIT
-      self.assertEquals(tweet1.memeClass, MemeType.KERMIT)
+      tweet = Tweet('topic1', 'this is my name')
+      meme = Meme_Doge('temp.jpg', score=0.2)
+      text, score = meme.generate(tweet)
+
+      self.assertEquals(text, 'this is my name')
+      self.assertEquals(score, 0.2)
 
 
 if __name__ == '__main__':
