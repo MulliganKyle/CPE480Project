@@ -1,12 +1,21 @@
 import copy
+import tweepy
+from tweepy import OAuthHandler
 
 from Filtering.BannedWordsFilter import BannedWordsFilter
 from Filtering.RandomFilter import RandomFilter
 from Twitter.Tweet import Tweet
 from Memes.MemeClass import *
 from MemeGen.memegenerator import make_meme
+from config import *
 
 
+MEME_IMG_FILENAME = "Meme.png"
+
+
+# TODO(ngarg): Make dictionary of score : []
+#              Sort by highest score.
+#              Randomly select within list of highest score.
 def bid_on_tweet(memes, tweet):
    max_score = 0
 
@@ -39,7 +48,7 @@ def generator():
    # Initialize MemeClasses.
    memes = [Meme_Doge('standard.jpg', score=0.1),
             Meme_XAllTheY('standard.jpg',score=0.2),
-            Meme_OneDoesNotSimply('standard.jpg', score=0.2),
+            Meme_OneDoesNotSimply('successkid.jpg', score=0.2),
             Meme_JackieChan('standard.jpg', score=0.2,
                             classifier='temp.pickle', func=None)]
 
@@ -48,8 +57,17 @@ def generator():
    tweet.image = make_meme(tweet.meme_text_upper,
                            tweet.meme_text_lower,
                            tweet.meme_class.filename)
-   tweet.image.save("Meme.png")
-   
+   tweet.image.save(MEME_IMG_FILENAME)
+
+   # Posts tweet to Twitter.
+   should_post = raw_input('Should I post to twitter? ')
+   if should_post[0] == 'Y':
+      print('Posting to Twitter...')
+      auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+      auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
+      api = tweepy.API(auth)
+      api.update_with_media(MEME_IMG_FILENAME, tweet.text)
+
 
 if __name__ == "__main__":
    generator()
