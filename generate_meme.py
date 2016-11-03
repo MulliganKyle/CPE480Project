@@ -1,21 +1,28 @@
+import copy
+
 from Filtering.BannedWordsFilter import BannedWordsFilter
 from Filtering.RandomFilter import RandomFilter
 from Twitter.Tweet import Tweet
 from Memes.MemeClass import *
+from MemeGen.memegenerator import make_meme
 
 
 def bid_on_tweet(memes, tweet):
    max_score = 0
-   tweet_text = ''
 
+   tweet = copy.deepcopy(tweet)
    for meme_obj in memes:
       text, score = meme_obj.generate(tweet)
       if score > max_score:
          max_score = score
-         tweet_text = text
+         words = text.split(' ')
+         split = len(words) / 2
 
-   return tweet_text
+         tweet.meme_text_upper = ' '.join(words[:split])
+         tweet.meme_text_lower = ' '.join(words[split:])
+         tweet.meme_class = meme_obj
 
+   return tweet
 
 
 def generator():
@@ -30,12 +37,18 @@ def generator():
    tweet = random_filter.filter(filtered_tweets)[0]
 
    # Initialize MemeClasses.
-   memes = [Meme_Doge(0.1),
-            Meme_XAllTheY(0.2),
-            Meme_OneDoesNotSimply(0.2)]
+   memes = [Meme_Doge('standard.jpg', score=0.1),
+            Meme_XAllTheY('standard.jpg',score=0.2),
+            Meme_OneDoesNotSimply('standard.jpg', score=0.2),
+            Meme_JackieChan('standard.jpg', score=0.2,
+                            classifier='temp.pickle', func=None)]
 
-   meme = bid_on_tweet(memes, tweet)
-   print(meme)
+   # Gets the best matching meme and makes a meme for it.
+   tweet = bid_on_tweet(memes, tweet)
+   tweet.image = make_meme(tweet.meme_text_upper,
+                           tweet.meme_text_lower,
+                           tweet.meme_class.filename)
+   tweet.image.save("Meme.png")
    
 
 if __name__ == "__main__":

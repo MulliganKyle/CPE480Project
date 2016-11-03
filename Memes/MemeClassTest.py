@@ -6,7 +6,7 @@ from MemeClass import *
 class TestMeme_XAllTheY(unittest.TestCase):
 
    def setUp(self):
-      self.meme = Meme_XAllTheY(0.5)
+      self.meme = Meme_XAllTheY('temp.img', score=0.5)
 
    def test_generate_found(self):
       tweet = Tweet(topic='topic', text='The team has signed former Temple guards')
@@ -30,7 +30,7 @@ class TestMeme_XAllTheY(unittest.TestCase):
 class TestMeme_OneDoesNotSimply(unittest.TestCase):
 
    def setUp(self):
-      self.meme = Meme_OneDoesNotSimply(0.5)
+      self.meme = Meme_OneDoesNotSimply('temp.img', score=0.5)
 
    def test_generate_found(self):
       tweet = Tweet(topic='topic', text='I\'m old enough to remember   him.')

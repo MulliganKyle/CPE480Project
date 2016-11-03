@@ -3,7 +3,6 @@ import unittest
 from BannedWordsFilter import *
 from RandomFilter import *
 from Twitter.Tweet import Tweet
-from Memes.MemeClass import MemeType
 
 
 class FilterTest(unittest.TestCase):

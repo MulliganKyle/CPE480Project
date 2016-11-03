@@ -13,11 +13,17 @@ Notes when running:
 
 	For instructions on how to get access keys, go here: https://marcobonzanini.com/2015/03/02/mining-twitter-data-with-python-part-1/
 	
+Installation
+
+   pip install nltk
+   pip install pillow
+
 Running tests (From project root):
 
    python -m unittest Twitter.TweetTest
    python -m unittest Filtering.FilterTest
    python -m unittest Memes.MemeClassTest
+   python MemeGen/memegenerator.py test-text
 
 Running program (From project root):
 
