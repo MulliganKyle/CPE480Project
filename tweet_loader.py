@@ -1,4 +1,5 @@
 from __future__ import print_function
+import os
 import time
 import sys
 import tweepy
@@ -7,6 +8,7 @@ import pickle
 from tweepy import OAuthHandler
 from config import * #consumer_key, consumer_secret, access_token, and access_secret
 from Twitter.Tweet import *
+
 
 # Authentication
 united_states_woeid = 23424977
@@ -26,12 +28,15 @@ def rate_limit_status():
 	print("Trends: " + str(data['resources']['trends']['/trends/place']))
 	print("Searches: " + str(data['resources']['search']['/search/tweets']))
 
+
 def searches_left():
 	data = api.rate_limit_status()
 	return data['resources']['search']['/search/tweets']['remaining']
 
+
 def time_delay(timeToWait):
 	time.sleep(timeToWait)
+
 
 # If remaining is 1 or 15 wait 15mins. Running once a day? every 12 hours?
 def check_limit():
@@ -41,6 +46,7 @@ def check_limit():
 	if trendsRemaining == 1 or searchesRemaining == 50:
 		print("Exhausted limit...Waiting 15 mins.\n")
 		TimeDelay(WAIT_TIME)
+
 
 def dump_tweets(serialized_tweets, dumpFileName):
 
@@ -54,6 +60,7 @@ def dump_tweets(serialized_tweets, dumpFileName):
 		dumpTextFile.write(tweet.text.encode('utf8') + "\n")
 		dumpTextFile.write("--------------------------------------------------------------------------------------------------------------------------------------------\n")
 
+
 def scrub_tweet(tweet):
 	# Take out RT's
 	if tweet.text[:3] == 'RT ':
@@ -61,10 +68,11 @@ def scrub_tweet(tweet):
 	# Take out hyper links
 	tweet.text = re.sub(r"http\S+", "", tweet.text)
 
+
 #Accesses the top trending topics from twitter and pulls NUM_OF_TWEETS tweets
 def top_tweets_dump():
 	tweets_to_analyze = set()
-	
+
 	#trends_place returns the top 50 trending topics, if available
 	trends = api.trends_place(united_states_woeid)[0]['trends']
 	trendNames = [trend['name'] for trend in trends]
@@ -83,13 +91,14 @@ def top_tweets_dump():
 			tweets_to_analyze.add(new_tweet_object)
 	return tweets_to_analyze
 
-def custom_dump(desiredTopic): 
+
+def custom_dump(desiredTopic):
 	print("inside custom_dump")
 	tweets_to_analyze = set()
 	searches = searches_left()
 	count = 0
 
-	while (searches > 1):
+	while (searches > 100): # Testing original is 1
 
 		#get NUM_OF_TWEETS tweets per trendName (max 100)
 		tweets = tweepy.Cursor(api.search, q = desiredTopic).items(NUM_OF_TWEETS_CUSTOM)
@@ -109,6 +118,7 @@ def custom_dump(desiredTopic):
 		print("searches remaining: " + str(searches))
 
 	return tweets_to_analyze
+
 
 # Main entry point for the program
 def loader():
@@ -131,7 +141,7 @@ def loader():
 
 	#print rate limit status
 	rate_limit_status()
-	
+
 	#Check rate limit
 	check_limit()
 
@@ -152,6 +162,7 @@ def loader():
 	rate_limit_status()
 
 	#wait 24 hours
+
 
 if __name__ == "__main__":
    loader()
