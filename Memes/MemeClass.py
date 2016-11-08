@@ -171,10 +171,11 @@ class Meme_JackieChan(Meme):
       self.func = kwargs['func']
 
    def generate(self, tweet):
-      features = self.func(tweet.text)
+      tokens, features = self.func(tweet.text)
       result = self.classifier.classify(features)
 
       if result:
-         return (tweet.text, self.score)
+         text = ' '.join(tokens) + '?'
+         return (text, self.score)
       return ('', 0)
 
