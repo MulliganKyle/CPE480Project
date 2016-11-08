@@ -14,7 +14,8 @@ from Twitter.Tweet import Tweet
 from config import *
 
 
-MEME_IMG_FILENAME = "Meme.png"
+MEME_IMG_FILENAME = 'Meme.png'
+DEBUG = True
 
 
 # TODO(ngarg): Make dictionary of score : []
@@ -40,7 +41,7 @@ def bid_on_tweet(memes, tweet):
 
 def generator():
    # Get tweets.
-   dump = open("Twitter/Dumps/SerializedTweets.p", "rb")
+   dump = open('Twitter/Dumps/SerializedTweets.p', 'rb')
    tweets = pickle.load(dump)
 
    # Get single tweet.
@@ -65,14 +66,15 @@ def generator():
    tweet.image.save(MEME_IMG_FILENAME)
 
    # Print metadata about tweet.
-   print type(tweet.meme_class)
-   print tweet.meme_text_upper
-   print tweet.meme_text_lower
+   if DEBUG:
+      print type(tweet.meme_class)
+      print tweet.meme_text_upper
+      print tweet.meme_text_lower
 
    # Posts tweet to Twitter.
    should_post = raw_input('Should I post to twitter? ')
    if should_post[0] == 'Y':
-      print('Posting to Twitter...')
+      print 'Posting to Twitter...'
       auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
       auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
       api = tweepy.API(auth)

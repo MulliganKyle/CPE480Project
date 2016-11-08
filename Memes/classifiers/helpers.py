@@ -26,8 +26,18 @@ def parse_txt_file(filename, path):
 def get_tokens(statement):
    tokenizer = TweetTokenizer()
    tokens = tokenizer.tokenize(statement)
-   tokens = [token.lower() for token in tokens]
    return tokens 
+
+
+# Generates features based on ranges.
+def create_features_for_ranges(feature_name, variable, ranges):
+   features = {'%s_<_%d' %(feature_name, ranges[0]): variable < ranges[0]}
+   if len(ranges) > 1:
+      features['%s_>=_%d' %(feature_name, ranges[-1])] = variable >= ranges[-1]
+      for min_range, max_range in zip(ranges, ranges[1:]):
+         feature = '%s_%d_to_%d' %(feature_name, min_range, max_range)
+         features[feature] = variable >= min_range and variable < max_range
+   return features
 
 
 # Splits the data made of ({features}: truth) into training and test.
@@ -40,9 +50,18 @@ def split_training_test(data, percent=0.75):
 
 
 # Creates a Naive Bayes classifier. Returns (classifier, score)
-def create_classifier(training_data, test_data):
+def create_classifier(training_data, test_data, debug=False):
    classifier = nltk.NaiveBayesClassifier.train(training_data)
    score = nltk.classify.accuracy(classifier, test_data)
+
+   if debug:
+      print('__Result__\t\t__Actual__')
+      for features, actual in test_data:
+         result = classifier.classify(features)
+         print('%s\t\t\t%s' %(result, actual))
+      classifier.show_most_informative_features(30)
+      print('Score: %.4f' %score)
+
    return classifier, score
 
 
