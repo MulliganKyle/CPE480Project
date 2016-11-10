@@ -1,6 +1,7 @@
 import copy
 import tweepy
 from tweepy import OAuthHandler
+from random import shuffle
 
 from Filtering.BannedWordsFilter import BannedWordsFilter
 from Filtering.RandomFilter import RandomFilter
@@ -18,30 +19,38 @@ MEME_IMG_FILENAME = 'Meme.png'
 DEBUG = True
 
 
-# TODO(ngarg): Make dictionary of score : []
-#              Sort by highest score.
-#              Randomly select within list of highest score.
+# Each meme bids on a tweet.
 def bid_on_tweet(memes, tweet):
-   max_score = 0
+   map_scores = {}
 
    tweet = copy.deepcopy(tweet)
    for meme_obj in memes:
       text, score = meme_obj.generate(tweet)
-      if score > max_score:
-         max_score = score
-         words = text.split(' ')
-         split = len(words) / 2
+      score = float(score)
 
-         tweet.meme_text_upper = ' '.join(words[:split])
-         tweet.meme_text_lower = ' '.join(words[split:])
-         tweet.meme_class = meme_obj
+      if score not in map_scores:
+         map_scores[score] = []
 
+      words = text.split(' ')
+      split = len(words) / 2
+
+      text_upper = ' '.join(words[:split])
+      text_lower = ' '.join(words[split:])
+      map_scores[score].append((text_upper, text_lower, meme_obj))
+
+   key = sorted(map_scores, reverse=True)[0]
+   tweets = map_scores[key]
+   shuffle(tweets)
+
+   tweet.meme_text_upper = tweets[0][0]
+   tweet.meme_text_lower = tweets[0][1]
+   tweet.meme_class = tweets[0][2]
    return tweet
 
 
 def generator():
    # Get tweets.
-   dump = open('Twitter/Dumps/SerializedTweets.p', 'rb')
+   dump = open('Twitter/Dumps/unambiguous_dump.p', 'rb')
    tweets = pickle.load(dump)
 
    # Get single tweet.
