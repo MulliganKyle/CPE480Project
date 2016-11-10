@@ -28,17 +28,13 @@ def generate_features():
 
 def clean_tweets(tweets):
    # Remove hashtags, @'s, emojis
-   # TODO: Better emoji removal
-   emoji_pattern = re.compile("["
-        u"\U0001F600-\U0001F64F"  # emoticons
-        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-        u"\U0001F680-\U0001F6FF"  # transport & map symbols
-        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-                           "]+", flags=re.UNICODE)
+
    for tweet in tweets:
+      #print tweet.text
       tweet.text = ' '.join(word for word in tweet.text.split(' ')
                                  if not word.startswith('#') and not word.startswith('@'))
-      tweet.text = re.sub(emoji_pattern, '', tweet.text)
+      tweet.text = re.sub('[^\w\/\$\!\.\,\?\ \-\']+', ' ', tweet.text)
+      #print tweet.text
 
 #extrat single words as features from the training data
 def generate_unigram_feature_list(training_data):
@@ -63,7 +59,16 @@ def generate_bigram_feature_list(training_data):
    return features_bigrams
 
 
-def generate_features(tweet, word_features, features_bigrams):
+def generate_features(tweet, word_features = None, features_bigrams = None):
+   if word_features is None:
+      f = open('Memes/classifiers/hashtag_word_features.p', 'rb')
+      word_features = pickle.load(f)
+      f.close()
+   if features_bigrams is None:
+      f = open('Memes/classifiers/hashtag_bigram_features.p', 'rb')
+      features_bigrams = pickle.load(f)
+      f.close()
+
    training_set = []
    word_training_features = ({word: (word in word_tokenize(tweet)) for word in word_features})
    sentence_bigrams = []
@@ -91,7 +96,6 @@ def main():
    clean_tweets(tweets_waitwhat)
    clean_tweets(tweets_justdoit)
    clean_tweets(tweets_unambiguous)
-
 
 
    confused_tweets = set(tweet.text for tweet in tweets_waitwhat)
@@ -123,6 +127,18 @@ def main():
 
    # Pickle classifier.
    pickle_classifier(classifier, score, ClassifierType.HASHTAG)
+
+   #Pickle the extracted features
+   f = open('Memes/classifiers/hashtag_word_features.p', 'wb')
+   pickle.dump(word_features, f)
+   f.close()
+   f = open('Memes/classifiers/hashtag_bigram_features.p', 'wb')
+   pickle.dump(bigram_features, f)
+   f.close()
+
+
+
+
 
 
 
