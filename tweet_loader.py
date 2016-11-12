@@ -19,14 +19,15 @@ api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 EXHAUST_TIME = 900 #15 mins
 DAILY_TIME = 86400 #24 hours
 NUM_OF_TWEETS = 1 #Per trending topic
-NUM_OF_TWEETS_CUSTOM = 100
 
 
 def rate_limit_status():
 	data = api.rate_limit_status()
-	print("Rate Limit Status:\n")
+	
+	print("\nRate Limit Status:")
 	print("Trends: " + str(data['resources']['trends']['/trends/place']))
 	print("Searches: " + str(data['resources']['search']['/search/tweets']))
+	print()
 
 
 def searches_left():
@@ -55,18 +56,21 @@ def dump_tweets(serialized_tweets, dumpFileName):
 
 	pickle.dump(serialized_tweets, open(dumpPickleFileName, "wb" ))
 	for tweet in serialized_tweets:
-		dumpTextFile.write("--------------------------------------------------------------------------------------------------------------------------------------------\n")
-		dumpTextFile.write("Topic: " + tweet.topic + "\nTweet(s):\n")
-		dumpTextFile.write(tweet.text.encode('utf8') + "\n")
-		dumpTextFile.write("--------------------------------------------------------------------------------------------------------------------------------------------\n")
+		dumpTextFile.write("[" + tweet + "]\n")
 
 
 def scrub_tweet(tweet):
 	# Take out RT's
 	if tweet.text[:3] == 'RT ':
 		tweet.text = tweet.text[3:]
+	
 	# Take out hyper links
-	tweet.text = re.sub(r"http\S+", "", tweet.text)
+	tweet.text = re.sub(r"http\S+", "", tweet.text) #removes URLs
+	tweet.text = re.sub(r"#\S+", "", tweet.text) #removes hashtags
+	tweet.text = re.sub(r'[^\x00-\x7F]+', '', tweet.text) #removes non-ASCII chars
+	tweet.text = re.sub(r"@\S+: ", "", tweet.text) #removes tweet author
+	tweet.text = re.sub(r"&amp;", "and", tweet.text) #replaces "&amp;" with "and"
+	tweet.text = tweet.text.strip() #removes leading and trailing whitespace
 
 
 #Accesses the top trending topics from twitter and pulls NUM_OF_TWEETS tweets
@@ -85,37 +89,41 @@ def top_tweets_dump():
 		tweets = tweepy.Cursor(api.search, q = trendName).items(NUM_OF_TWEETS)
 		for tweet in tweets:
 			new_tweet_object = Tweet(trendName, tweet.text.translate(non_bmp_map))
-			print("Pre-scrub:\n" + new_tweet_object.text + "\n")
 			scrub_tweet(new_tweet_object)
-			print("Post-scrub:\n" + new_tweet_object.text + "\n")
 			tweets_to_analyze.add(new_tweet_object)
 	return tweets_to_analyze
 
-
-def custom_dump(desiredTopic):
-	print("inside custom_dump")
+def custom_dump(desiredTopic, desiredTweetCount):
+	print("Performing custom twitter dump for the following topic: " + desiredTopic)
+	
 	tweets_to_analyze = set()
 	searches = searches_left()
 	count = 0
+	duplicates = 0
 
-	while (searches > 100): # Testing original is 1
+	print("Requesting " + str(desiredTweetCount) + " tweets with topic " + desiredTopic)
+	sys.stdout.flush()
+	tweets = tweepy.Cursor(api.search, q = desiredTopic).items(desiredTweetCount)
 
-		#get NUM_OF_TWEETS tweets per trendName (max 100)
-		tweets = tweepy.Cursor(api.search, q = desiredTopic).items(NUM_OF_TWEETS_CUSTOM)
+	for tweet in tweets:
+		count += 1
+		new_tweet_object = Tweet(desiredTopic, tweet.text.translate(non_bmp_map))
+		scrub_tweet(new_tweet_object)
+		
+		size = len(tweets_to_analyze)
+		tweets_to_analyze.add(new_tweet_object.text)
 
-		for tweet in tweets:
-			count += 1
-			new_tweet_object = Tweet(desiredTopic, tweet.text.translate(non_bmp_map))
-			#print("Pre-scrub:\n" + new_tweet_object.text + "\n")
-			scrub_tweet(new_tweet_object)
-			#print("Post-scrub:\n" + new_tweet_object.text + "\n")
-			tweets_to_analyze.add(new_tweet_object)
+		if size == len(tweets_to_analyze):
+			duplicates += 1
 
-		print("got " + str(count) + " tweets")
-		count = 0
+	print("Got " + str(count) + " tweets, with " + str(duplicates) + " duplicates")
+	print("Total number of tweets retrieved: " + str(len(tweets_to_analyze)))
+	sys.stdout.flush()
+	count = 0
+	duplicates = 0
 
-		searches = searches_left()
-		print("searches remaining: " + str(searches))
+	searches = searches_left()
+	print(str(searches) + " searches left")
 
 	return tweets_to_analyze
 
@@ -126,18 +134,13 @@ def loader():
 	isCustomDump = False
 	desiredTopic = ''
 	dumpFileName = ''
+	desiredTweetCount = 0
 
-	if len(sys.argv) == 3 :
+	if len(sys.argv) == 4:
 		desiredTopic = sys.argv[1]
 		dumpFileName = sys.argv[2]
-		print(isCustomDump)
+		desiredTweetCount = int(sys.argv[3])
 		isCustomDump = True
-		print(isCustomDump)
-
-		print("Performing custom twitter dump for topic: " + desiredTopic)
-
-	else :
-		print("Performing top-tweets dump")
 
 	#print rate limit status
 	rate_limit_status()
@@ -147,7 +150,7 @@ def loader():
 
 	#Pull tweets
 	if(isCustomDump == True):
-		serialized_tweets = custom_dump(desiredTopic)
+		serialized_tweets = custom_dump(desiredTopic, desiredTweetCount)
 
 		#Dump tweets
 		dump_tweets(serialized_tweets, dumpFileName)
