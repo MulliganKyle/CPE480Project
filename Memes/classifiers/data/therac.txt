@@ -1,0 +1,135 @@
+Computers are increasingly being introduced into safety-critical systems and, as a consequence, have been involved in accidents.|
+Some of the most widely cited software-related accidents in safety-critical systems involved a computerized radiation therapy machine called the Therac-25.|
+Between June 1985 and January 1987, six known accidents involved massive overdoses by the Therac-25 -- with resultant deaths and serious injuries.|
+They have been described as the worst series of radiation accidents in the 35-year history of medical accelerators.With information for this article taken from publicly available documents, we present a detailed accident investigation of the factors involved in the overdoses and the attempts by the users, manufacturers, and the US and Canadian governments to deal with them.|
+Our goal is to help others learn from this experience, not to criticize the equipment's manufacturer or anyone else.|
+The mistakes that were made are not unique to this manufacturer but are, unfortunately, fairly common in other safety-critical systems.|
+As Frank Houston of the US Food and Drug Administration (FDA) said, "A significant amount of software for life-critical systems comes from small firms, especially in the medical device industry; firms that fit the profile of those resistant to or uninformed of the principles of either system safety or software engineering."Furthermore, these problems are not limited to the medical industry.|
+It is still a common belief that any good engineer can build software, regardless of whether he or she is trained in state-of-the-art software-engineering procedures.|
+Many companies building safety-critical software are not using proper procedures from a software-engineering and safety-engineering perspective.Most accidents are system accidents; that is, they stem from complex interactions between various components and activities.|
+To attribute a single cause to an accident is usually a serious mistake.|
+In this article, we hope to demonstrate the complex nature of accidents and the need to investigate all aspects of system development and operation to understand what has happened and to prevent future accidents.Despite what can be learned from such investigations, fears of potential liability or loss of business make it difficult to find out the details behind serious engineering mistakes.|
+When the equipment is regulated by government agencies, some information may be available.|
+Occasionally, major accidents draw the attention of the US Congress or President and result in formal accident investigations (for instance, the Rogers commission investigation of the Challenger accident and the Kemeny commission investigation of the Three Mile Island incident).The Therac-25 accidents are the most serious computer-related accidents to date (at least nonmilitary and admitted) and have even drawn the attention of the popular press.|
+(Stories about the Therac-25 have appeared in trade journals, newspapers, People Magazine, and on television's 20/20 and McNeil/ Lehrer News Hour.) Unfortunately, the previous accounts of the Therac-25 problems have been oversimplified, with misleading omissions.|
+In an effort to remedy this, we have obtained information from a wide variety of sources, including lawsuits and the US and Canadian government agencies responsible for regulating such equipment.|
+We have tried to be very careful to present only what we could document from original sources, but there is no guarantee that the documentation itself is correct.|
+When possible, we looked for multiple confirming sources for the more important facts.We have tried not to bias our description of the accidents, but it is difficult not to filter unintentionally what is described.|
+Also, we were unable to investigate firsthand or get information about some aspects of the accidents that may be very relevant.|
+For example, detailed information about the manufacturer's software development, management, and quality control was unavailable.|
+We had to infer most information about these from statements in correspondence or other sources.As a result, our analysis of the accidents may omit some factors.|
+But the facts available support previous hypotheses about the proper development and use of software to control dangerous processes and suggest hypotheses that need further evaluation.|
+Following our account of the accidents and the responses of the manufacturer, government agencies, and users, we present what we believe are the most compelling lessons to be learned in the context of software engineering, safety engineering, and government and user standards and oversight.Genesis of the Therac-25Medical linear accelerators (linacs) accelerate electrons to create high- energy beams that can destroy tumors with minimal impact on the surrounding healthy tissue.|
+Relatively shallow tising healthy tissue.|
+Relatively shallow tissue is treated with the accelerated electrons; to reach deeper tissue, the electron beam is converted into X-ray photons.Atomic Energy Commission Limited (AECL) and a French company called CGR collaborated to build linear accelerators.|
+(AECL is an arms-length entity, called a crown corporation, of the Canadian government.|
+Since the time of the incidents related in this article, AECL Medical, a division of AECL, is in the process of being privatized and is now called Theratronics International Limited.|
+Currently, AECL's primary business is the design and installation of nuclear reactors.) The products of AECL and CGR's cooperation were (1) the Therac-6, a 6 million electron volt (MeV) accelerator capable of producing X rays only and, later, (2) the Therac-20, a 20-MeV dual-mode (X rays or electrons) accelerator.|
+Both were versions of older CGR machines, the Neptune and Sagittaire, respectively, which were augmented with computer control using a DEC PDP 11 minicomputer.Software functionality was limited in both machines: The computer merely added convenience to the existing hardware, which was capable of standing alone.|
+Industry-standard hardware safety features and interlocks in the underlying machines were retained.|
+We know that some old Therac-6 software routines were used in the Therac-20 and that CGR developed the initial software.The business relationship between AECL and CGR faltered after the Therac-20 effort.|
+Citing competitive pressures, the two companies did not renew their cooperative agreement when scheduled in 1981.|
+In the mid-1970s, AECL developed a radical new "double-pass" concept for electron acceleration.|
+A double-pass accelerator needs much less space to develop comparable energy levels because it folds the long physical mechanism required to accelerate the electrons, and it is more economic to produce (since it uses a magnetron rather than a klystron as the energy source).Using this double-pass concept, AECL designed the Therac-25, a dual-mode linear accelerator that can deliver either photons at 25 MeV or electrons at various energy levels (see Figure 1.|
+Typical Therac-25 Facility.).|
+Compared with the Therac-20, the Therac-25 is notably more compact, more versatile, and arguably easier to use.|
+The higher energy takes advantage of the phenomenon of "depth dose": As the energy increases, the depth in the body at which maximum dose buildup occurs also increases, sparing the tissue above the target area.|
+Economic advantages also come into play for the customer, since only one machine is required for both treatment modalities (electrons and photons).Several features of the Therac-25 are important in understanding the accidents.|
+First, like the Therac-6 and the Therac-20, the Therac-25 is controlled by a PDP 11.|
+However, AECL designed the Therac-25 to take advantage of computer control from the outset; AECL did not build on a stand-alone machine.|
+The Therac-6 and Therac-20 had been designed around machines that already had histories of clinical use without computer control.In addition, the Therac-25 software has more responsibility for maintaining safety than the software in the previous machines.|
+The Therac-20 has independent protective circuits for monitoring electron-beam scanning, plus mechanical interlocks for policing the machine and ensuring safe operation.|
+The Therac-25 relies more on software for these functions.|
+AECL took advantage of the computer's abilities to control and monitor the hardware and decided not to duplicate all the existing hardware safety mechanisms and interlocks.|
+This approach is becoming more common as companies decide that hardware interlocks and backups are not worth the expense, or they put more faith (perhaps misplaced) on software than on hardware reliability.Finally, some software for the machines was interrelated or reused.|
+In a letter to a Therac-25 user, the AECL quality assurance manager said, "The same Therac-6 package was used by the AECL software people when they started the Therac-25 software.|
+The Therac-20 and Therac-25 software programs were done independently, starting from a common base." Reuse of Therac-6 design features or modules may explain some of the problematic aspects of the Therac-25 software (see the sidebar "Therac-25 software development and design").|
+The quality assurance manager was apparently unaware that some Therac-20 routines were also used in the Therac-25; this was discovered after a bug related to one of the Therac-25 accidents was found in the Therac-20 software.AECL produced the first hardwired prototype of the Therac-25 in 1976, and the completely computerized commercial version was available in late 1982.|
+(The sidebars provide details about the machine's design and controlling software, important in understanding the accidents.|
+Side-Bar: Therac-25 Software Development and Design)In March 1983, AECL performed a safety analysis on the Therac-25.|
+This analysis was in the form of a fault tree and apparently excluded the software.|
+According to the final report, the analysis made several assumptions:(1) Programming errors have been reduced by extensive testing on a hardware simulator and under field conditions on teletherapy units.|
+Any residual software errors are not included in the analysis.(2) Program software does not degrade due to wear, fatigue, or reproduction process.(3) Computer execution errors are caused by faulty hardware components and by "soft" (random) errors induced by alpha particles and electromagnetic noise.The fault tree resulting from this analysis does appear to include computer failure, although apparently, judging from these assumptions, it considers only hardware failures.|
+For example, in one OR gate leading to the event of getting the wrong energy, a box contains "Computer selects wrong energy" and a probability of 10^11 is assigned to this event.|
+For "Computer selects wrong mode," a probability of 4 x 10^9 is given.|
+The report provides no justification of either number.Side-Bar: Major Event Time LineAccident historyEleven Therac-25s were installed: five in the US and six in Canada.|
+Six accidents involving massive overdoses to patients occurred between 1985 and 1987.|
+The machine was recalled in 1987 for extensive design changes, including hardware safeguards against software errors.Related problems were found in the Therac-20 software.|
+These were not recognized until after the Therac-25 accidents because the Therac-20 included hardware safety interlocks and thus no injuries resulted.In this section, we present a chro-nological account of the accidents and the responses from the manufacturer, government regulatory agencies, and users.users.Kennestone Regional Oncology Center, 1985.|
+Details of this accident in Marietta, Georgia, are sketchy since it was never carefully investigated.|
+There was no admission that the injury was caused by the Therac-25 until long after the occurrence, despite claims by the patient that she had been injured during treatment, the obvious and severe radiation burns the patient suffered, and the suspicions of the radiation physicist involved.After undergoing a lumpectomy to remove a malignant breast tumor, a 61-year-old woman was receiving follow-up radiation treatment to nearby lymph nodes on a Therac-25 at the Kennestone facility in Marietta.|
+The Therac-25 had been operating at Kennestone for about six months; other Therac-25s had been operating, apparently without incident, since 1983.On June 3, 1985, the patient was set up for a 10-MeV electron treatment to the clavicle area.|
+When the machine turned on, she felt a "tremendous force of heat this red-hot sensation." When the technician came in, the patient said, "You burned me." The technician replied that that was not possible.|
+Although there were no marks on the patient at the time, the treatment area felt "warm to the touch."It is unclear exactly when AECL learned about this incident.|
+Tim Still, the Kennestone physicist, said that he contacted AECL to ask if the Therac-25 could operate in electron mode without scanning to spread the beam.|
+Three days later, the engineers at AECL called the physicist back to explain that improper scanning was not possible.In an August 19, 1986, letter from AECL to the FDA, the AECL quality assurance manager said, "In March of 1986, AECL received a lawsuit from the patient involved.|
+This incident was never reported to AECL prior to this date, although some rather odd questions had been posed by Tim Still, the hospital physicist." The physicist at a hospital in Tyler, Texas, where a later accident occurred, reported, "According to Tim Still, the patient filed suit in October 1985 listing the hospital, manufacturer, and service organization responsible for the machine.|
+AECL was notified informally about the suit by the hospital, and AECL received official notification of a lawsuit in November 1985."Because of the lawsuit (filed on November 13, 1985), some AECL administrators must have known about the Marietta accident -- although no investigation occurred at this time.|
+Further comments by FDA investigators point to the lack of a mechanism in AECL to follow up reports of suspected accidents.|
+The lack of follow-up in this case appears to be evidence of such a problem in the organization.The patient went home, but shortly afterward she developed a reddening and swelling in the center of the treatment area.|
+Her pain had increased to the point that her shoulder "froze" and she experienced spasms.|
+She was admitted to West Paces Ferry Hospital in Atlanta, but her oncologists continued to send her to Kennestone for Therac-25 treatments.|
+Clinical explanation was sought for the reddening of the skin, which at first her oncologist attributed to her disease or to normal treatment reaction.About two weeks later, the physicist at Kennestone noticed that the patient had a matching reddening on her back as though a burn had gone through her body, and the swollen area had begun to slough off layers of skin.|
+Her shoulder was immobile, and she was apparently in great pain.|
+It was obvious that she had a radiation burn, but the hospital and her doctors could provide no satisfactory explanation.|
+Shortly afterward, she initiated a lawsuit against the hospital and AECL regarding her injury.The Kennestone physicist later estimated that she received one or two doses of radiation in the 15,000- to 20,000-rad (radiation absorbed dose) range.|
+He does not believe her injury could have been caused by less than 8,000 rads.|
+Typical single therapeutic doses are in the 200-rad range.|
+Doses of 1,000 rads can be fatal if delivered to the whole body; in fact, the accepted figure for whole-body radiation that will cause death in 50 percent of the cases is 500 rads.|
+The consequences of an overdose to a smaller part of the body depend on the tissue's radiosensitivity.|
+The director of radiation oncology at the Kennestone facility explained their confusion about the accident as due to the fact that they had never seen an overtreatment of that magnitude before.Eventually, the patient's breast had to be removed because of the radiation burns.|
+She completely lost the use of her shoulder and her arm, and was in constant pain.|
+She had suffered a serious radiation burn, but the manufacturer and operators of the machine refused to believe that it could have been caused by the Therac-25.|
+The treatment prescription printout feature was disabled at the time of the accident, so there was no hard copy of the treatment data.|
+The lawsuit was eventually settled out of court.From what we can determine, the accident was not reported to the FDA until after the later Tyler accidents in 1986 (described in later sections).|
+The reporting regulations for medical device incidents at that time applied only to equipment manufacturers and importers, not users.|
+The regulations required that manufacturers and importers report deaths, serious injuries, or malfunctions that could result in those consequences.|
+Health-care professionals and institutions were not required to report incidents to manufacturers.|
+(The law was amended in 1990 to require health-care facilities to report incidents to the manufacturer and the FDA.) The comptroller general of the US Government Accounting Office, in testimony before Congress on November 6, 1989, expressed great concern about the viability of the incident-reporting regulations in preventing or spotting medical-device problems.|
+According to a GAO study, the FDA knows of less than 1 percent of deaths, serious injuries, or equipment malfunctions that occur in hospitals.At this point, the other Therac-25 users were unaware that anything untoward had occurred and did not learn about any problems with the machine until after subsequent accidents.|
+Even then, most of their information came through personal communication among themselves.Ontario Cancer Foundation, 1985.|
+The second in this series of accidents occurred at this Hamilton, Ontario, Canada, clinic about seven weeks after the Kennestone patient was overdosed.|
+At that time, the Therac-25 at the Hamilton clinic had been in use for more than six months.|
+On July 26, 1985, a 40-year-old patient came to the clinic for her 24th Therac-25 treatment for carcinoma of the cervix.|
+The operator activated the machine, but the Therac shut down after five seconds with an "H-tilt" error message.|
+The Therac's dosimetry system display read "no dose" and indicated a "treatment pause."Since the machine did not suspend and the control display indicated no dose was delivered to the patient, the operator went ahead with a second attempt at treatment by pressing the "P" key (the proceed command), expecting the machine to deliver the proper dose this time.|
+This was standard operating procedure and, as described in the sidebar The operator interface, Therac-25 operators had become accustomed to frequent malfunctions that had no untoward consequences for the patient.|
+Again, the machine shut down in the same manner.|
+The operator repeated this process four times after the original attempt -- the display showing "no dose" delivered to the patient each time.|
+After the fifth pause, the machine went into treatment suspend, and a hospital service technician was called.|
+The technician found nothing wrong with the machine.|
+This also was not an unusual scenario, according to a Therac-25 operator.After the treatment, the patient complained of a burning sensation, described as an "electric tingling shock" to the treatment area in her hip.|
+Six other patients were treated later that day without incident.|
+The patient came back for further treatment on July 29 and complained of burning, hip pain, and excessive swelling in the region of treatment.|
+The machine was taken out of service, as radiation overexposure was suspected.|
+The patient was hospitalized for the condition on July 30.|
+AECL was informed of the apparent radiation injury and sent a service engineer to investigate.|
+The FDA, the then-Canadian Radiation Protection Bureau (CRPB), and the users were informed that there was a problem, although the users claim that they were never informed that a patient injury had occurred.|
+(On April 1, 1986, the CRPB and the Bureau of Medical Devices were merged to form the Bureau of Radiation and Medical Devices or BRMD.) Users were told that they should visually confirm the turntable alignment until further notice (which occurred three months later).The patient died on November 3, 1985, of an extremely virulent cancer.|
+An autopsy revealed the cause of death as the cancer, but it was noted that had she not died, a total hip replacement would have been necessary as a result of the radiation overexposure.|
+An AECL technician later estimated the patient had received between 13,000 and 17,000 rads.|
+Manufacturer response.|
+AECL could not reproduce the malfunction that had occurred, but suspected a transient failure in the microswitch used to determine turntable position.|
+During the investigation of the accident, AECL hardwired the error conditions they assumed were necessary for the malfunction and, as a result, found some design weaknesses and potential mechanical problems involving the turntable positioning.The computer senses and controls turntable position by reading a 3-bit signal about the status of three microswitches in the turntable switch assembly (see the sidebar Turntable positioning).|
+Essentially, AECL determined that a 1-bit error in the microswitch codes (which could be caused by a single open-circuit fault on the switch lines) could produce an ambiguous position message for the computer.|
+The problem was exacerbated by the design of the mechanism that extends a plunger to lock the turntable when it is in one of the three cardinal positions: The plunger could be extended when the turntable was way out of position, thus giving a second false position indication.|
+AECL devised a method to indicate turntable position that tolerated a 1-bit error: The code would still unambiguously reveal correct position with any one microswitch failure.In addition, AECL altered the software so that the computer checked for "in transit" status of the switches to keep further track of the switch operation and the turntable position, and to give additional assurance that the switches were working and the turntable was moving.As a result of these improvements, AECL claimed in its report and correspondence with hospitals that "analysis of the hazard rate of the new solution indicates an improvement over the old system by at least five orders of magnitude." A claim that safety had been improved by five orders of magnitude seems exaggerated, especially given that in its final incident report to the FDA, AECL concluded that it "cannot be firm on the exact cause of the accident but can only suspect." This underscores the company's inability to determine the cause of the accident with any certainty.|
+The AECL quality assurance manager testified that AECL could not reproduce the switch malfunction and that testing of the microswitch was "inconclusive." The similarity of the errant behavior and the injuries to patients in this accident and a later one in Yakima, Washington, (attributed to software error) provide good reason to believe that the Hamilton overdose was probably related to software error rather than to a microswitch failure.Government and user response.|
+The Hamilton accident resulted in a voluntary recall by AECL, and the FDA termed it a Class II recall.|
+Class II means "a situation in which the use of, or exposure to, a violative product may cause temporary or medically reversible adverse health consequences or where the probability of serious adverse health consequences is remote." Four users in the US were advised by a letter from AECL on August 1, 1985, to visually check the ionization chamber to make sure it was in its correct position in the collimator opening before any treatment and to discontinue treatment if they got an H-tilt message with an incorrect dose indicated.|
+The letter did not mention that a patient injury was involved.|
+The FDA audited AECL's subsequent modifications.|
+After the modifications, the users were told that they could return to normal operating procedures.As a result of the Hamilton accident, the head of advanced X-ray systems in the CRPB, Gordon Symonds, wrote a report that analyzed the design and performance characteristics of the Therac-25 with respect to radiation safety.|
+Besides citing the flawed microswitch, the report faulted both hardware and software components of the Therac's design.|
+It concluded with a list of four modifications to the Therac-25 necessary for minimum compliance with Canada's Radiation Emitting Devices (RED) Act.|
+The RED law, enacted in 1971, gives government officials power to ensure the safety of radiation-emitting devices.The modifications recommended in the Symonds report included redesigning the microswitch and changing the way the computer handled malfunction conditions.|
+In particular, treatment was to be terminated in the event of a dose-rate malfunction, giving a treatment "suspend." This would have removed the option to proceed simply by pressing the "P" key.|
+The report also made recommendations regarding collimator test procedures and message and command formats.|
+A November 8, 1985 letter signed by Ernest Létourneau, M.D., director of the CRPB, asked that AECL make changes to the Therac-25 based on the Symonds report "to be in compliance with the RED Act."Although, as noted above, AECL did make the microswitch changes, it did not comply with the directive to change the malfunction pause behavior into treatment suspends, instead reducing the maximum number of retries from five to three.|
+According to Symonds, the deficiencies outlined in the CRPB letter of November 8 were still pending when subsequent accidents five months later changed the priorities.|
+If these later accidents had not occurred, AECL would have been compelled to comply with the requirements in the letter.Immediately after the Hamilton accident, the Ontario Cancer Foundation hired an independent consultant to investigate.|
+He concluded in a September 1985 report that an independent system (beside the computer) was needed to verify turntable position and suggested the use of a potentiometer.|
+The CRPB wrote a letter to AECL in November 1985 requesting that AECL install such an independent upper collimator positioning interlock on the Therac-25.|
+Also, in January 1986, AECL received a letter from the attorney representing the Hamilton clinic.|
+The letter said there had been continuing problems with the turntable, including four incidents at Hamilton, and requested the installation of an independent system (potentiometer) to verify turntable position.|
+AECL did not comply: No independent interlock was installed on the Therac-25s at this time.
