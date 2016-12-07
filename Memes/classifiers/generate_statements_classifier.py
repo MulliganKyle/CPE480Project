@@ -101,7 +101,8 @@ def main():
    opinionatedStatements = parse_txt_file(filename='opinionatedStatements.txt', path=path, delim="|\n")
    nonOpinionatedStatements = parse_txt_file(filename='wow3k.txt', path=path, delim="|\n")
 
-   return
+   #print(opinionatedStatements)
+   #return
 
    # Generate features.
    data = []
