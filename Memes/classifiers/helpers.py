@@ -21,6 +21,14 @@ def parse_txt_file(filename, path):
       return lines
    raise Error('File not found')
 
+# Parses a text file into a list. Uses delim to break apart the file
+def parse_txt_file(filename, path, delim):
+   full_filename = os.path.join(path, filename)
+   with open(full_filename) as f:
+      lines = [line.strip() for line in f.read().split(delim)]
+      return lines
+   raise Error('File not found')
+
 
 # Gets the tokens within the statement.
 def get_tokens(statement):
