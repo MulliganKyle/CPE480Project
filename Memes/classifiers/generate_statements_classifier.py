@@ -13,7 +13,7 @@ POS_MAP = {'DT': [40, 50, 60],
            'VBD': [5, 32],
            'JJ': [5, 30, 40, 90]}
 
-OPINION_WORD_LIST = ['should', 'could', 'would', 'dont', 'good', 'better', 'best', 'worse', 'worst', 
+OPINION_WORD_LIST = ['should', 'could', 'would', 'dont', 'good', 'better', 'best', 'worse', 'worst',
   'awesome', 'terrible', 'suck', 'sucks', 'amazing', 'love', 'hate', 'meh', 'probably', 'great']
 
 WORD_LIST = ['do', 'if', 'is', 'or', 'this', 'the', 'she', 'he' ,'I']
@@ -108,7 +108,7 @@ def main():
    data = []
    for statement in opinionatedStatements:
       data.append((generate_features(statement)[1], True))
-   
+
    for statement in nonOpinionatedStatements:
       data.append((generate_features(statement)[1], False))
 
@@ -125,5 +125,3 @@ def main():
 
 if __name__ == '__main__':
    main()
-
-

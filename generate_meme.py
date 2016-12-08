@@ -60,7 +60,8 @@ def generator():
    tweet_text = random_filter.filter(filtered_tweets)[0]
 
    # Initialize MemeClasses.
-   memes = [Meme_Doge('doge.jpg', score=0.1),
+   memes = [Meme_Profession('arrowtoknee.jpg', score=0.1),
+            Meme_Doge('doge.jpg', score=0.1),
             Meme_XAllTheY('x_all_the_y.jpg',score=0.2),
             Meme_OneDoesNotSimply('one_does_not_simply.jpg', score=0.2),
             Meme_JackieChan('jackie_chan.jpg',
@@ -68,11 +69,9 @@ def generator():
                             func=gqc.generate_features),
             Meme_JackieChan_Hashtag('jackie_chan.jpg',
                             classifier=ClassifierType.HASHTAG,
-                            func=ghc.generate_features)]
- #           Meme_Kermit('kermit.jpg',
- #                           classifier=ClassifierType.STATEMENT,
- #                           func=gsc.generate_features)]
-
+                            func=ghc.generate_features),Meme_Kermit('kermit.jpg',
+                            classifier=ClassifierType.STATEMENT,
+                            func=gsc.generate_features)]
 
    # Gets the best matching meme and makes a meme for it.
    tweet = Tweet(None, tweet_text)

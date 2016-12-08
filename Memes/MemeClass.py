@@ -10,6 +10,7 @@ from nltk.corpus import wordnet as wn
 
 from Memes.classifiers.helpers import unpickle_classifier
 
+wnl=WordNetLemmatizer()
 
 class Meme(object):
    """
@@ -63,6 +64,20 @@ class Meme(object):
    def generate(self, tweet):
       # Returns (text, score) tuple.
       raise NotImplementedError()
+
+   def _find_nouns(self, tagged):
+      return [word for word in tagged if(word[1] == "NN" or word[1] == "NNP" or word[1] == "NNS" or word[1] == "NNPS")]
+
+   #checks if a word is plural, returns whether it is plural and returns the singular form
+   def _isplural(self, word):
+      lemma = wnl.lemmatize(word, 'n')
+      plural = True if word is not lemma else False
+      return plural, lemma
+
+   #gets the singular form of a noun and returns it
+   def _get_singular_form(self, noun):
+         lemma = wnl.lemmatize(noun, 'n')
+         return lemma
 
 
 class Meme_Doge(Meme):
@@ -219,10 +234,44 @@ class Meme_Kermit(Meme):
       self.func = kwargs['func']
 
    def generate(self, tweet):
-      tokens, features = self.func(tweet.text)
+      tokens, features = self.func(tweet)
       result = self.classifier.classify(features)
 
       if result:
-         text = tweet.text + ' but thats none of my business'
+         text = tweet + ' but thats none of my business'
          return (text, self.score)
       return ('', 0)
+
+class Meme_Profession(Meme):
+   """
+   Represents a "Profession" meme.
+
+   classifier: obj
+      ClassifierType indicating the type of classifier.
+   func: obj
+      Function that gets the features to use for the classifiers.
+   """
+
+   def __init__(self, filename, **kwargs):
+      super(Meme_Profession, self).__init__(filename)
+      self.score = kwargs['score']
+
+   def generate(self, tweet):
+      text = ''
+      score = 0.0
+
+      tokens, tagged = self._tag_sentence(tweet)
+      nouns = self._find_nouns(tagged)
+      singularNouns = []
+      if(len(nouns)>0):
+         score = self.score
+         for noun in nouns:
+            singularNouns.append(self._get_singular_form(noun[0]))
+
+         for noun in singularNouns:
+            if (noun[0] == 'a' or noun[0] == 'e' or noun[0] == 'i' or noun[0] == 'o' or noun[0] == 'u' or noun[0] == 'A' or noun[0] == 'E' or noun[0] == 'I' or noun[0] == 'O' or noun[0] == 'U'):
+               text = "I used to be an " + noun + " like you, but then I took an arrow to the knee."
+            else:
+               text = "I used to be a " + noun + " like you, but then I took an arrow to the knee."
+
+      return text, score
