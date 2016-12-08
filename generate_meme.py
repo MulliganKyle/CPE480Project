@@ -9,15 +9,14 @@ from Filtering.RandomFilter import RandomFilter
 from MemeGen.memegenerator import make_meme
 from Memes.classifiers.helpers import ClassifierType
 import Memes.classifiers.generate_questions_classifier as gqc
+import Memes.classifiers.generate_hashtag_classifier as ghc
 
 from Memes.MemeClass import *
 from Twitter.Tweet import Tweet
 from config import *
 
-
 MEME_IMG_FILENAME = 'Meme.png'
 DEBUG = True
-
 
 # Each meme bids on a tweet.
 def bid_on_tweet(memes, tweet):
@@ -25,7 +24,7 @@ def bid_on_tweet(memes, tweet):
 
    tweet = copy.deepcopy(tweet)
    for meme_obj in memes:
-      text, score = meme_obj.generate(tweet)
+      text, score = meme_obj.generate(tweet.text)
       score = float(score)
 
       if score not in map_scores:
@@ -50,14 +49,14 @@ def bid_on_tweet(memes, tweet):
 
 def generator():
    # Get tweets.
-   dump = open('Twitter/Dumps/unambiguous_dump.p', 'rb')
+   dump = open('Twitter/Dumps/waitwhat_new.p', 'rb')
    tweets = pickle.load(dump)
 
    # Get single tweet.
    banned_filter = BannedWordsFilter()
    filtered_tweets = banned_filter.filter(tweets)
    random_filter = RandomFilter(1)
-   tweet = random_filter.filter(filtered_tweets)[0]
+   tweet_text = random_filter.filter(filtered_tweets)[0]
 
    # Initialize MemeClasses.
    memes = [Meme_Doge('doge.jpg', score=0.1),
@@ -65,9 +64,13 @@ def generator():
             Meme_OneDoesNotSimply('one_does_not_simply.jpg', score=0.2),
             Meme_JackieChan('jackie_chan.jpg',
                             classifier=ClassifierType.QUESTION,
-                            func=gqc.generate_features)]
+                            func=gqc.generate_features),
+            Meme_JackieChan('jackie_chan.jpg',
+                            classifier=ClassifierType.HASHTAG,
+                            func=ghc.generate_features)]
 
    # Gets the best matching meme and makes a meme for it.
+   tweet = Tweet(None, tweet_text)
    tweet = bid_on_tweet(memes, tweet)
    tweet.image = make_meme(tweet.meme_text_upper,
                            tweet.meme_text_lower,

@@ -23,7 +23,7 @@ NUM_OF_TWEETS = 1 #Per trending topic
 
 def rate_limit_status():
 	data = api.rate_limit_status()
-	
+
 	print("\nRate Limit Status:")
 	print("Trends: " + str(data['resources']['trends']['/trends/place']))
 	print("Searches: " + str(data['resources']['search']['/search/tweets']))
@@ -63,7 +63,7 @@ def scrub_tweet(tweet):
 	# Take out RT's
 	if tweet.text[:3] == 'RT ':
 		tweet.text = tweet.text[3:]
-	
+
 	# Take out hyper links
 	tweet.text = re.sub(r"http\S+", "", tweet.text) #removes URLs
 	tweet.text = re.sub(r"#\S+", "", tweet.text) #removes hashtags
@@ -95,7 +95,7 @@ def top_tweets_dump():
 
 def custom_dump(desiredTopic, desiredTweetCount):
 	print("Performing custom twitter dump for the following topic: " + desiredTopic)
-	
+
 	tweets_to_analyze = set()
 	searches = searches_left()
 	count = 0
@@ -109,7 +109,7 @@ def custom_dump(desiredTopic, desiredTweetCount):
 		count += 1
 		new_tweet_object = Tweet(desiredTopic, tweet.text.translate(non_bmp_map))
 		scrub_tweet(new_tweet_object)
-		
+
 		size = len(tweets_to_analyze)
 		tweets_to_analyze.add(new_tweet_object.text)
 
@@ -165,7 +165,7 @@ def loader():
 	rate_limit_status()
 
 	#wait 24 hours
-
+	check_limit()
 
 if __name__ == "__main__":
    loader()
