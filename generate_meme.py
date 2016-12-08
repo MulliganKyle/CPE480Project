@@ -64,7 +64,10 @@ def generator():
             Meme_OneDoesNotSimply('one_does_not_simply.jpg', score=0.2),
             Meme_JackieChan('jackie_chan.jpg',
                             classifier=ClassifierType.QUESTION,
-                            func=gqc.generate_features)]
+                            func=gqc.generate_features),
+            Meme_JackieChan('jackie_chan.jpg',
+                            classifier=ClassifierType.HASHTAG,
+                            func=ghc.generate_features)]
 
 
    # Gets the best matching meme and makes a meme for it.
