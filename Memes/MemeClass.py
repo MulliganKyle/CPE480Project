@@ -8,7 +8,7 @@ import pickle
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet as wn
 
-from Memes.classifiers.helpers import unpickle_classifier 
+from Memes.classifiers.helpers import unpickle_classifier
 
 
 class Meme(object):
@@ -69,7 +69,7 @@ class Meme_Doge(Meme):
    """
    Represents a "doge" meme.
 
-   score: int 
+   score: int
       Score of the class if matching text is found.
    """
 
@@ -78,14 +78,14 @@ class Meme_Doge(Meme):
       self.score = kwargs['score']
 
    def generate(self, tweet):
-      return (tweet.text, self.score)
+      return (tweet, self.score)
 
 
 class Meme_XAllTheY(Meme):
    """
    Represents a "X all the Y" meme.
-   
-   score: int 
+
+   score: int
       Score of the class if matching text is found.
    """
 
@@ -104,7 +104,7 @@ class Meme_XAllTheY(Meme):
       text = ''
       score = 0.0
 
-      sentence = tweet.text
+      sentence = tweet
       tokens, tagged = self._tag_sentence(sentence)
       verbs = self._find_verbs(tagged)
       nouns = self._find_common_plural_nouns(tagged)
@@ -126,8 +126,8 @@ class Meme_XAllTheY(Meme):
 class Meme_OneDoesNotSimply(Meme):
    """
    Represents a "One Does not Simply" meme.
-   
-   score: int 
+
+   score: int
       Score of the class if matching text is found.
    """
 
@@ -139,7 +139,7 @@ class Meme_OneDoesNotSimply(Meme):
       text = ''
       score = 0
 
-      sentence = tweet.text
+      sentence = tweet
       tokens, tagged = self._tag_sentence(sentence)
       verbs = self._find_verbs(tagged)
 
@@ -158,10 +158,10 @@ class Meme_OneDoesNotSimply(Meme):
 class Meme_JackieChan(Meme):
    """
    Represents a "Jackie Chan" meme.
-   
-   classifier: obj 
+
+   classifier: obj
       ClassifierType indicating the type of classifier.
-   func: obj 
+   func: obj
       Function that gets the features to use for the classifiers.
    """
 
@@ -171,7 +171,7 @@ class Meme_JackieChan(Meme):
       self.func = kwargs['func']
 
    def generate(self, tweet):
-      tokens, features = self.func(tweet.text)
+      tokens, features = self.func(tweet)
       result = self.classifier.classify(features)
 
       if result:
@@ -183,10 +183,10 @@ class Meme_JackieChan(Meme):
 class Meme_Kermit(Meme):
    """
    Represents a "Kermit" meme.
-   
-   classifier: obj 
+
+   classifier: obj
       ClassifierType indicating the type of classifier.
-   func: obj 
+   func: obj
       Function that gets the features to use for the classifiers.
    """
 
@@ -203,4 +203,3 @@ class Meme_Kermit(Meme):
          text = tweet.text + ' but thats none of my business'
          return (text, self.score)
       return ('', 0)
-

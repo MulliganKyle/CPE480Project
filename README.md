@@ -2,12 +2,11 @@
 
 Alex Ehm, Nupur Garg, Kyle Mulligan, Mason Stevenson, Jules Sulpico
 
-   
+
 # Installation
 
       pip install nltk
       pip install pillow
-
 
 # Running tests (from project root):
 
@@ -16,17 +15,16 @@ Alex Ehm, Nupur Garg, Kyle Mulligan, Mason Stevenson, Jules Sulpico
       python -m unittest Memes.MemeClassTest
       python MemeGen/memegenerator.py test-text
 
-
 # Running program (from project root):
 
    ### Running Main Programs
-   
+
       python tweet_loader.py
       python generate_meme.py
 
    ### Generating Classifiers
 
-      python -m Memes.classifiers.generate_questions_classifier 
+      python -m Memes.classifiers.generate_questions_classifier
 
 
 # Data Sources

@@ -22,18 +22,14 @@ from Memes.classifiers.helpers import *
 
 PATH = "Twitter/Dumps/"
 
-def generate_features():
-   return
-
-
 def clean_tweets(tweets):
    # Remove hashtags, @'s, emojis
 
    for tweet in tweets:
       #print tweet.text
-      tweet.text = ' '.join(word for word in tweet.text.split(' ')
+      tweet = ' '.join(word for word in tweet.split(' ')
                                  if not word.startswith('#') and not word.startswith('@'))
-      tweet.text = re.sub('[^\w\/\$\!\.\,\?\ \-\']+', ' ', tweet.text)
+      tweet = re.sub('[^\w\/\$\!\.\,\?\ \-\']+', ' ', tweet)
       #print tweet.text
 
 #extrat single words as features from the training data
@@ -50,11 +46,11 @@ def generate_bigram_feature_list(training_data):
       for gram in ngrams(word_tokenize(sentence), 2):
          if gram not in features_bigrams:
             features_bigrams.add(gram)
-   features_bigrams = set(bigram for bigram in features_bigrams 
-                                 if bigram[0] not in stopwords.words("english") 
+   features_bigrams = set(bigram for bigram in features_bigrams
+                                 if bigram[0] not in stopwords.words("english")
                                  and bigram[1] not in stopwords.words("english"))
-   features_bigrams = set(bigram for bigram in features_bigrams 
-                                 if bigram[0] not in string.punctuation 
+   features_bigrams = set(bigram for bigram in features_bigrams
+                                 if bigram[0] not in string.punctuation
                                  and bigram[1] not in string.punctuation)
    return features_bigrams
 
@@ -84,9 +80,9 @@ def generate_features(tweet, word_features = None, features_bigrams = None):
 def main():
 
    # Unpickle tweets
-   dump_waitwhat = open(PATH + "waitwhat_dump.p" , "rb")
-   dump_justdoit = open(PATH + "justdoit_dump.p" , "rb")
-   dump_unambiguous = open(PATH + "unambiguous_dump.p" , "rb")
+   dump_waitwhat = open(PATH + "waitwhat_new.p" , "rb")
+   dump_justdoit = open(PATH + "justdoit_new.p" , "rb")
+   dump_unambiguous = open(PATH + "unambiguous_new.p" , "rb")
 
    tweets_waitwhat = pickle.load(dump_waitwhat)
    tweets_justdoit = pickle.load(dump_justdoit)
@@ -98,13 +94,13 @@ def main():
    clean_tweets(tweets_unambiguous)
 
 
-   confused_tweets = set(tweet.text for tweet in tweets_waitwhat)
-   not_confused_tweets = set(tweet.text for tweet in tweets_justdoit) | set(tweet.text for tweet in tweets_unambiguous)
+   confused_tweets = set(tweet for tweet in tweets_waitwhat)
+   not_confused_tweets = set(tweet for tweet in tweets_justdoit) | set(tweet for tweet in tweets_unambiguous)
 
 
    confused_tweets = [x.lower() for x in confused_tweets]
    not_confused_tweets = [x.lower() for x in not_confused_tweets]
-   all_tweets = confused_tweets + not_confused_tweets   
+   all_tweets = confused_tweets + not_confused_tweets
 
    # Extract the features from the training data
    word_features = generate_unigram_feature_list(all_tweets)

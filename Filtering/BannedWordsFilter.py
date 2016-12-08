@@ -1,7 +1,7 @@
 # 10/21/16
 # BannedWordsFilter.py
 #
-# TweetFilter implementation that filters tweets based on 
+# TweetFilter implementation that filters tweets based on
 
 import os
 from TweetFilter import *
@@ -15,7 +15,7 @@ class BannedWordsFilter(TweetFilter):
 		All banned words in the blacklist folder.
 	"""
 
-	def __init__(self): 
+	def __init__(self):
 		self.folder = 'Filtering/blacklist'
 		self.wordsList = set()
 
@@ -43,7 +43,7 @@ class BannedWordsFilter(TweetFilter):
 		# 	 print word
 
 		for tweet in tweets:
-			if self.containsBannedWord(tweet.text):
+			if self.containsBannedWord(tweet):
 				toRemove.add(tweet)
 
 		for tweet in tweets:
@@ -54,7 +54,7 @@ class BannedWordsFilter(TweetFilter):
 
 	def containsBannedWord(self, text):
 		for token in text.split(' '):
-			if token in self.wordsList: 
+			if token in self.wordsList:
 				# print '%s is a banned word' %token
 				# print 'removing the following tweet: %s' %text
 				return True
