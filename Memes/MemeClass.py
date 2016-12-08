@@ -179,3 +179,28 @@ class Meme_JackieChan(Meme):
          return (text, self.score)
       return ('', 0)
 
+
+class Meme_Kermit(Meme):
+   """
+   Represents a "Kermit" meme.
+   
+   classifier: obj 
+      ClassifierType indicating the type of classifier.
+   func: obj 
+      Function that gets the features to use for the classifiers.
+   """
+
+   def __init__(self, filename, **kwargs):
+      super(Meme_Kermit, self).__init__(filename)
+      self.classifier, self.score = unpickle_classifier(kwargs['classifier'])
+      self.func = kwargs['func']
+
+   def generate(self, tweet):
+      tokens, features = self.func(tweet.text)
+      result = self.classifier.classify(features)
+
+      if result:
+         text = tweet.text + ' but thats none of my business'
+         return (text, self.score)
+      return ('', 0)
+
