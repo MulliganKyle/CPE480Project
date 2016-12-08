@@ -55,7 +55,7 @@ def generate_bigram_feature_list(training_data):
    return features_bigrams
 
 
-def generate_features(tweet, word_features = None, features_bigrams = None):
+def generate_features(tweet, word_features=None, features_bigrams=None):
    if word_features is None:
       f = open('Memes/classifiers/hashtag_word_features.p', 'rb')
       word_features = pickle.load(f)

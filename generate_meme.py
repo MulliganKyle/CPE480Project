@@ -10,6 +10,7 @@ from MemeGen.memegenerator import make_meme
 from Memes.classifiers.helpers import ClassifierType
 import Memes.classifiers.generate_questions_classifier as gqc
 import Memes.classifiers.generate_hashtag_classifier as ghc
+import Memes.classifiers.generate_statements_classifier as gsc
 
 from Memes.MemeClass import *
 from Twitter.Tweet import Tweet
@@ -65,9 +66,12 @@ def generator():
             Meme_JackieChan('jackie_chan.jpg',
                             classifier=ClassifierType.QUESTION,
                             func=gqc.generate_features),
-            Meme_JackieChan('jackie_chan.jpg',
+            Meme_JackieChan_Hashtag('jackie_chan.jpg',
                             classifier=ClassifierType.HASHTAG,
                             func=ghc.generate_features)]
+ #           Meme_Kermit('kermit.jpg',
+ #                           classifier=ClassifierType.STATEMENT,
+ #                           func=gsc.generate_features)]
 
 
    # Gets the best matching meme and makes a meme for it.

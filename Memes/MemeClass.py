@@ -179,6 +179,29 @@ class Meme_JackieChan(Meme):
          return (text, self.score)
       return ('', 0)
 
+class Meme_JackieChan_Hashtag(Meme):
+   """
+   Represents a "Jackie Chan" meme.
+
+   classifier: obj
+      ClassifierType indicating the type of classifier.
+   func: obj
+      Function that gets the features to use for the classifiers.
+   """
+
+   def __init__(self, filename, **kwargs):
+      super(Meme_JackieChan_Hashtag, self).__init__(filename)
+      self.classifier, self.score = unpickle_classifier(kwargs['classifier'])
+      self.func = kwargs['func']
+
+   def generate(self, tweet):
+      features = self.func(tweet)
+      result = self.classifier.classify(features)
+
+      if result:
+         return (tweet, self.score)
+      return ('', 0)
+
 
 class Meme_Kermit(Meme):
    """
