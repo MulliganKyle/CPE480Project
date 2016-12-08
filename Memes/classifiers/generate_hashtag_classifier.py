@@ -22,10 +22,6 @@ from Memes.classifiers.helpers import *
 
 PATH = "Twitter/Dumps/"
 
-def generate_features():
-   return
-
-
 def clean_tweets(tweets):
    # Remove hashtags, @'s, emojis
 
